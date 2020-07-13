@@ -10,8 +10,16 @@ import os, sys, socket, getpass
 import datetime as dt
 import sqlite3 as sql
 
+from automate_all import open_portakal
+
 try:
-    os.mkdir(f"C:/Users/{getpass.getuser()}/Desktop/database")
+    check_onlıne = open_portakal()
+except:
+    check_onlıne = "0,0"
+
+
+try:
+    os.mkdir(f"C:/Users/{getpass.getuser()}/OneDrive/Masaüstü/database")
 except:
     pass
 
@@ -61,7 +69,7 @@ def veri_al(yol, tarih, db_ismi, veri_ismi = "*"):
             kalan_nakit = im.fetchone()[0]
             return ayikla(kalan_nakit)
 
-database_connect = f"C:/Users/{getpass.getuser()}/Desktop/database/hesaplar.db"
+database_connect = f"C:/Users/{getpass.getuser()}/OneDrive/Masaüstü/database/hesaplar.db"
 
 def update():
     l = []
@@ -81,22 +89,25 @@ except:
 
 try:
     gecmis_nakiti = veri_al(database_connect, gecmis_tarih(1)[0], "Hesap_sonuc", veri_ismi = "KALAN NAKIT")
-    gecmis_kredi = veri_al(database_connect, gecmis_tarih(1)[0], "Hesap_sonuc", veri_ismi = "KALAN KREDI")
+    gecmis_kredi = veri_al(database_connect, gecmis_tarih(1)[0], "Hesap_sonuc", veri_ismi = "YARININ KREDISI")
 except:
     try:
         gecmis_nakiti = veri_al(database_connect, gecmis_tarih(2)[0], "Hesap_sonuc", veri_ismi = "KALAN NAKIT")
-        gecmis_kredi = veri_al(database_connect, gecmis_tarih(2)[0], "Hesap_sonuc", veri_ismi = "KALAN KREDI")
+        gecmis_kredi = veri_al(database_connect, gecmis_tarih(2)[0], "Hesap_sonuc", veri_ismi = "YARININ KREDISI")
     except:
         try:
             gecmis_nakiti = veri_al(database_connect, gecmis_tarih(3)[0], "Hesap_sonuc", veri_ismi = "KALAN NAKIT")
-            gecmis_kredi = veri_al(database_connect, gecmis_tarih(3)[0], "Hesap_sonuc", veri_ismi = "KALAN KREDI")
+            gecmis_kredi = veri_al(database_connect, gecmis_tarih(3)[0], "Hesap_sonuc", veri_ismi = "YARININ KREDISI")
         except:
             try:
                 gecmis_nakiti = veri_al(database_connect, gecmis_tarih(4)[0], "Hesap_sonuc", veri_ismi = "KALAN NAKIT")
-                gecmis_kredi = veri_al(database_connect, gecmis_tarih(4)[0], "Hesap_sonuc", veri_ismi = "KALAN KREDI")
+                gecmis_kredi = veri_al(database_connect, gecmis_tarih(4)[0], "Hesap_sonuc", veri_ismi = "YARININ KREDISI")
             except:
                 gecmis_nakiti = 0.0
                 gecmis_kredi = 0.0
+
+print(gecmis_kredi, type(gecmis_kredi))
+print(gecmis_nakiti, type(gecmis_nakiti))
 
 
 etiket_list = ["KREDI", "NAKIT", "SALON NAKIT", "ONLINE", "SETCARD", "SODEXO", "TICKET", "MULTINET",
@@ -144,7 +155,7 @@ class Hesap(App):
             elif s >= 15:
                 self.etiket_pen.add_widget(Label(text=i, font_size="20sp", bold=True, halign="center", color = [1,.3,.4,1]))
 
-        #inputlar
+        #inputs
         self.KREDI = TextInput(multiline=False, write_tab=False, on_text_validate=self.hesapla)
         self.NAKIT = TextInput(multiline=False, write_tab=False, on_text_validate=self.hesapla)
         self.SALON_NAKIT = TextInput(multiline=False, write_tab=False, on_text_validate=self.hesapla)
@@ -185,6 +196,8 @@ class Hesap(App):
         self.textinput_pen.add_widget(self.ALINAN_CARI)
         self.textinput_pen.add_widget(self.KALAN_CARI)
         self.textinput_pen.add_widget(self.NOTUNUZ)
+
+        self.ONLINE.text = check_onlıne#checking onlıne with selenium automation
 
         if guncel:
             self.guncelle = True
@@ -231,6 +244,8 @@ class Hesap(App):
         return self.ana_pencere
 
     def hesapla(self, zorunlu_nesne):
+
+
         self.topla = []
         self.cıkar = sum([ayikla(self.NAKIT_GIDER.text), ayikla(self.NAKIT_AVANS.text)])
         for i in [self.KREDI.text, self.NAKIT.text, self.SALON_NAKIT.text, self.ONLINE.text, self.SETCARD.text, self.SODEXO.text, self.TICKET.text, self.MULTINET.text, self.METROPOL.text, 
