@@ -12,10 +12,13 @@ import sqlite3 as sql
 
 from automate_all import open_portakal
 
-try:
-    check_onlıne = open_portakal()
-except:
-    check_onlıne = "0,0"
+
+def check_onlıne():
+    try:
+        return open_portakal()
+    except:
+        print("Returned 0, excepted an error")
+        return "0,0"
 
 
 try:
@@ -106,8 +109,6 @@ except:
                 gecmis_nakiti = 0.0
                 gecmis_kredi = 0.0
 
-print(gecmis_kredi, type(gecmis_kredi))
-print(gecmis_nakiti, type(gecmis_nakiti))
 
 
 etiket_list = ["KREDI", "NAKIT", "SALON NAKIT", "ONLINE", "SETCARD", "SODEXO", "TICKET", "MULTINET",
@@ -131,8 +132,12 @@ def son(name_list, value_list, hangi):
     elif hangi == "value":
         return tuple(v)
 
-Config.set('graphics', 'width', '780')
-Config.set('graphics', 'height', '660')
+Config.set("graphics", "fullscreen", 0)
+Config.set('graphics', 'width', "790")
+Config.set('graphics', 'height', "680")
+Config.write()
+
+
 
 class Hesap(App):
     def build(self):
@@ -197,7 +202,9 @@ class Hesap(App):
         self.textinput_pen.add_widget(self.KALAN_CARI)
         self.textinput_pen.add_widget(self.NOTUNUZ)
 
-        self.ONLINE.text = check_onlıne#checking onlıne with selenium automation
+        if not guncel:
+            self.ONLINE.text = check_onlıne()#checking onlıne with selenium automation
+        
 
         if guncel:
             self.guncelle = True
@@ -205,6 +212,8 @@ class Hesap(App):
                 self.NAKIT_GIDER.text, self.KREDI_GIDER.text, self.NAKIT_AVANS.text, self.KREDI_AVANS.text, self.DASHBOARD.text, self.FAZLA.text, self.ALINAN_CARI.text, \
                     self.KALAN_CARI.text, self.NOTUNUZ.text = str(guncel[2]), str(guncel[3]), str(guncel[4]), str(guncel[5]), str(guncel[6]), str(guncel[7]), str(guncel[8]), str(guncel[9]), str(guncel[10]), str(guncel[11]), str(guncel[12]), str(guncel[13]), \
                         str(guncel[14]), str(guncel[15]), str(guncel[16]), str(guncel[17]), str(guncel[18]), str(guncel[19]), str(guncel[20]), str(guncel[21])
+        
+        
 
         for i in hesap_etiket:
             self.hesap_pen.add_widget(Label(text=i, bold=True, italic=True, color = [.2,.9,.3,1], font_size="20sp"))
