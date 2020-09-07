@@ -2,6 +2,6 @@
 
 Make your day end easy for your restaurant.
 
-
-Dependencies;
-    -Kivy  (you just need to install this third party module)
+Dependencies:Kivy
+ 
+-for installations instruction [click](https://kivy.org/doc/stable/installation/installation-windows.html)
